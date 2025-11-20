@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>我的任務 - TaskFlow</title>
+    <style>
+        body{font-family:Arial;background:#f8f9fa;padding:20px}
+        .container{max-width:1000px;margin:auto;background:white;padding:30px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,0.1)}
+        table{width:100%;border-collapse:collapse;margin-top:20px}
+        th,td{border:1px solid #ddd;padding:12px;text-align:left}
+        th{background:#007bff;color:white}
+        .btn{padding:8px 16px;color:white;border:none;border-radius:5px;text-decoration:none;margin-left:8px}
+        .btn-danger{background:#dc3545}
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>我的任務</h1>
+    
+    <p>
+  歡迎，<%= user.username %>！ 
+  <a href="/tasks/new" class="btn" style="background:#28a745">新增任務</a>
+  <a href="/auth/change-password" class="btn" style="background:#ffc107;color:black">修改密碼</a>
+
+  <% if (user.username === 'admin') { %>
+    <a href="/admin" class="btn" style="background:#ff9500">管理員面板</a>
+  <% } %>
+
+  <a href="/auth/logout" class="btn" style="background:#6c757d;float:right">登出</a>
+    </p>
+    <div class="search">
+        <form method="GET">
+            <input type="text" name="title" placeholder="搜尋標題" value="<%= query.title || '' %>">
+            <select name="status">
+                <option value="">所有狀態</option>
+                <option value="pending" <%= query.status==='pending'?'selected':'' %>>待處理</option>
+                <option value="in-progress" <%= query.status==='in-progress'?'selected':'' %>>進行中</option>
+                <option value="completed" <%= query.status==='completed'?'selected':'' %>>已完成</option>
+            </select>
+            <button type="submit">搜尋</button>
+            <a href="/tasks">清除</a>
+        </form>
+    </div>
+
+    <table>
+        <tr>
+            <th>標題</th>
+            <th>描述</th>
+            <th>狀態</th>
+            <th>優先度</th>
+            <th>建立時間</th>
+            <th>操作</th>
+        </tr>
+        <% if (tasks.length === 0) { %>
+            <tr><td colspan="6" style="text-align:center">還沒有任務，快去新增吧！</td></tr>
+        <% } else { %>
+            <% tasks.forEach(t => { %>
+            <tr>
+                <td><%= t.title %></td>
+                <td><%= t.description || '-' %></td>
+                <td><%= t.status === 'pending' ? '待處理' : t.status === 'in-progress' ? '進行中' : '已完成' %></td>
+                <td><%= t.priority === 'high' ? '高' : t.priority === 'medium' ? '中' : '低' %></td>
+                <td><%= new Date(t.createdAt).toLocaleString('zh-TW') %></td>
+                <td>
+                    <a href="/tasks/<%= t._id %>/edit">編輯</a> |
+                    <form action="/tasks/<%= t._id %>/delete" method="POST" style="display:inline">
+                        <button type="submit" onclick="return confirm('確定刪除？')" class="btn-danger" style="padding:5px 10px;border:none;cursor:pointer">刪除</button>
+                    </form>
+                </td>
+            </tr>
+            <% }) %>
+        <% } %>
+    </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <title>登入 - TaskFlow</title>
+    <style>
+        body{font-family:Arial;background:#f0f2f5;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}
+        .box{background:white;padding:40px;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);width:380px}
+        input{width:100%;padding:12px;margin:10px 0;border:1px solid #ddd;border-radius:6px;box-sizing:border-box}
+        button{width:100%;padding:12px;background:#007bff;color:white;border:none;border-radius:6px;cursor:pointer;font-size:16px}
+        button:hover{background:#0056b3}
+        .error{color:#dc3545;text-align:center;margin:10px 0}
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h1 style="text-align:center;margin-bottom:30px">TaskFlow 登入</h1>
+        <% if (typeof error !== 'undefined') { %>
+            <p class="error"><%= error %></p>
+        <% } %>
+        <form method="POST" action="/auth/login">
+            <input type="text" name="username" placeholder="使用者名稱" required>
+            <input type="password" name="password" placeholder="密碼" required>
+            <button type="submit">登入</button>
+        </form>
+        <p style="text-align:center;margin-top:20px">
+            還沒有帳號？ <a href="/auth/register">立即註冊</a>
+        </p>
+    </div>
+</body>
+</html>
