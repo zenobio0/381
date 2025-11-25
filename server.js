@@ -5,6 +5,7 @@ const cookieSession = require('cookie-session');
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/tasks');
 const apiRoutes = require('./routes/api');
+const adminRoutes = require('./routes/admin');   // ← 記得加這行
 
 const app = express();
 
@@ -28,14 +29,15 @@ app.use(cookieSession({
 // 4. 把 session 中的 user 放到 req.user（所有路由都能用）
 app.use((req, res, next) => {
   req.user = req.session.user || null;
-  res.locals.user = req.session.user || null;  // 讓 ejs 直接用 <%= user.username %>
+  res.locals.user = req.session.user || null;
   next();
 });
 
-// 5. 路由
+// 5. 【重要！】所有路由都必須寫在 app.listen() 之前！！！
 app.use('/auth', authRoutes);
 app.use('/tasks', taskRoutes);
-app.use('/api/tasks', apiRoutes);
+app.use('/api/tasks', apiRoutes);   // RESTful API
+app.use('/admin', adminRoutes);     // 管理員面板
 
 // 6. 首頁（自動導向登入或任務頁）
 app.get('/', (req, res) => {
@@ -46,11 +48,14 @@ app.get('/', (req, res) => {
   }
 });
 
-// 7. 啟動伺服器
+// 7. 404 處理（可選，但建議加）
+app.use((req, res) => {
+  res.status(404).send('<h1 style="text-align:center;margin-top:100px;color:#dc3545">404 - Page Not Found</h1>');
+});
+
+// 8. 啟動伺服器（一定要放最後！！！）
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Cloud URL: https://three81-0jmu.onrender.com`);
 });
-
-const adminRoutes = require('./routes/admin');
-app.use('/admin', adminRoutes);
